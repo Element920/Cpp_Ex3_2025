@@ -9,13 +9,11 @@ namespace coup {
     public:
         Baron(const std::string& name);
 
-        void gather();
-        void tax();
-        void bribe();
-        void arrest(Player& target);
-        void sanction(Player& target) ;
-        void coup(Player& target) ;
-        void use_special_ability();
+        // Override special ability (investment)
+        void use_special_ability() override;
+        
+        // Override sanction to handle compensation
+        void sanction(Player& target) override;
     };
 
 } // namespace coup

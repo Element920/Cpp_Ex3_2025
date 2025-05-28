@@ -3,7 +3,7 @@
 //
 #include "Game.hpp"
 #include <stdexcept>
-
+#include "Player.hpp"
 
 using namespace coup;
 
@@ -72,7 +72,7 @@ void Game::print_action(const std::string& action) {
     last_action = action;
 }
 
-    std::ostream& operator<<(std::ostream& os, const Game& game) {
-        os << "Last action: " << game.last_action;
-        return os;
-    }
+    // std::ostream& operator<<(std::ostream& os, const Game& game) {
+    //     os << "Last action: " << game;
+    //     return os;
+    // }

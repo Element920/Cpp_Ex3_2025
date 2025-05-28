@@ -9,13 +9,11 @@ namespace coup {
     public:
         Governor(const std::string& name);
 
-        void gather() ;
-        void tax() ;
-        void bribe() ;
-        void arrest(Player& target) ;
-        void sanction(Player& target) ;
-        void coup(Player& target) ;
-        void use_special_ability(Player& target) ;
+        // Governor gets 3 coins from tax instead of 2
+        void tax() override;
+        
+        // Governor can undo tax actions of other players
+        void undo(Player& target);
     };
 
 } // namespace coup

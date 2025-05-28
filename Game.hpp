@@ -5,6 +5,7 @@
 #include <string>
 #include "Player.hpp"
 
+
 namespace coup {
 
     class GameNotOverException : public std::exception {
@@ -19,12 +20,12 @@ namespace coup {
         std::vector<Player*> players_list;
         int current_turn_index;
         int pot;
-        std::string last_action;
+       
 
 
     public:
         Game();
-
+        std::string last_action;
         void add_player(Player* player);
         Player& turn();
         std::vector<std::string> players() const;

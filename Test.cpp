@@ -1,8 +1,8 @@
 //
 // Created by israel on 5/19/25.
 //
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+// #include <SFML/Graphics.hpp>
+// #include <SFML/Window.hpp>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 

@@ -4,20 +4,12 @@
 #include "Player.hpp"
 
 namespace coup {
-
     class General : public Player {
     public:
         General(const std::string& name);
-
-        void gather() ;
-        void tax() ;
-        void bribe() ;
-        void arrest(Player& target) ;
-        void sanction(Player& target) ;
-        void coup(Player& target) ;
-        void use_special_ability(Player& target) ;
+        void block_coup(Player& attacker, Player& target); // Block coup for 5 coins
+        void arrest(Player& target) override; // Gets coin back when arrested
     };
+}
 
-} // namespace coup
-
-#endif // COUP_GENERAL_HPP
+#endif 

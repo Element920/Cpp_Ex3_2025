@@ -4,11 +4,9 @@
 #include <string>
 #include <vector>
 #include "Role.hpp"
-#include "Game.hpp"
-
 
 namespace coup {
-    class Game;
+    class Game; // Forward declaration to avoid circular dependency
 
     class Player {
     protected:
@@ -19,6 +17,9 @@ namespace coup {
         std::vector<std::string> blocked_actions;
         void is_must_coup() const;
         coup::Game* game;
+        
+        // Helper method to check if it's this player's turn
+        void check_turn() const;
 
     public:
         Player(std::string name, Role role);
@@ -31,14 +32,14 @@ namespace coup {
         bool is_active() const;
         void set_coins(int coins);
 
-        void gather();
-        void tax();
-        void bribe();
-        void arrest(Player& target);
-        void sanction(Player& target);
-        void coup(Player& target);
+        virtual void gather();
+        virtual void tax();
+        virtual void bribe();
+        virtual void arrest(Player& target);
+        virtual void sanction(Player& target);
+        virtual void coup(Player& target);
 
-        void use_special_ability(Player &target);
+        virtual void use_special_ability();
 
         void pre_turn_ability();
 

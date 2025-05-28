@@ -4,20 +4,11 @@
 #include "Player.hpp"
 
 namespace coup {
-
     class Spy : public Player {
     public:
         Spy(const std::string& name);
-
-        void gather() ;
-        void tax() ;
-        void bribe() ;
-        void arrest(Player& target) ;
-        void sanction(Player& target) ;
-        void coup(Player& target) ;
-        void use_special_ability(Player& target) ;
+        void use_special_ability(Player& target); // See coins and block arrest
     };
-
-} // namespace coup
+}
 
 #endif // COUP_SPY_HPP

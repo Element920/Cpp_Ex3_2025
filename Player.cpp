@@ -2,6 +2,7 @@
 // Created by israel on 5/19/25.
 //
 #include "Player.hpp"
+#include "Game.hpp"
 #include <stdexcept>
 #include <iostream>
 #include "Role.hpp"
@@ -9,12 +10,11 @@
 using namespace coup;
 
 Player::Player(std::string name, Role role)
-    : name(std::move(name)), role(role), coins(0), active(true), game(nullptr){}
+    : name(std::move(name)), role(role), coins(2), active(true), game(nullptr){} // Start with 2 coins
 
 const std::string& Player::get_name() const {
     return name;
 }
-
 
 Role Player::get_role() const {
     return role;
@@ -28,19 +28,32 @@ void Player::set_coins(int coins) {
     this->coins += coins;
 }
 
-
 bool Player::is_active() const {
     return active;
 }
 
+void Player::check_turn() const {
+    if (game && &game->turn() != this) {
+        throw std::runtime_error("Not your turn");
+    }
+}
+
 void Player::gather() {
+    check_turn();
+    is_must_coup();
     if (is_action_blocked("gather")) {
         throw std::runtime_error("gather is blocked for this player");
     }
     coins += 1;
+    if (game) {
+        game->print_action(name + " performed gather");
+        game->advance_turn();
+    }
 }
 
 void Player::tax() {
+    check_turn();
+    is_must_coup();
     if (is_action_blocked("tax")) {
         throw std::runtime_error("tax is blocked for this player");
     }
@@ -49,20 +62,35 @@ void Player::tax() {
     } else {
         coins += 2;
     }
+    if (game) {
+        game->print_action(name + " performed tax");
+        game->advance_turn();
+    }
 }
 
 void Player::bribe() {
+    check_turn();
+    is_must_coup();
     if (coins < 4) {
         throw std::runtime_error("not enough coins for bribe");
     }
     coins -= 4;
-    // פעולה נוספת מתבצעת מחוץ למחלקה
+    if (game) {
+        game->print_action(name + " performed bribe");
+        game->advance_turn();
+    }
 }
 
 void Player::arrest(Player& target) {
+    check_turn();
+    is_must_coup();
     if (!target.is_active()) {
         throw std::runtime_error("target is not active");
     }
+    if (is_action_blocked("arrest")) {
+        throw std::runtime_error("arrest is blocked for this player");
+    }
+    
     if (target.role == Role::Spy) {
         throw std::runtime_error("cannot arrest a Spy");
     }
@@ -70,12 +98,16 @@ void Player::arrest(Player& target) {
         if (target.coins < 2) {
             throw std::runtime_error("Merchant has insufficient coins for penalty");
         }
-        target.coins -= 2; // משלם לקופה
+        target.coins -= 2; // Pays to pot
+        if (game) game->add_to_pot(2);
     } else if (target.role == Role::General) {
         if (target.coins < 1) {
             throw std::runtime_error("General has no coins to refund");
         }
-        // לא לוקחים ממנו מטבע, או מחזירים אותו מיד
+        // General gets the coin back immediately
+        target.coins -= 1;
+        coins += 1;
+        target.coins += 1; // Gets it back
     } else {
         if (target.coins < 1) {
             throw std::runtime_error("target has no coins to steal");
@@ -83,9 +115,16 @@ void Player::arrest(Player& target) {
         target.coins -= 1;
         coins += 1;
     }
+    
+    if (game) {
+        game->print_action(name + " performed arrest");
+        game->advance_turn();
+    }
 }
 
 void Player::sanction(Player& target) {
+    check_turn();
+    is_must_coup();
     if (coins < 3) {
         throw std::runtime_error("not enough coins for sanction");
     }
@@ -94,14 +133,21 @@ void Player::sanction(Player& target) {
     target.add_blocked_action("tax");
 
     if (target.role == Role::Baron) {
-        target.receive_coin(1); // פיצוי
+        target.receive_coin(1); // Compensation
     }
     if (target.role == Role::Judge) {
-        pay_coin(1); // תשלום נוסף לקופה
+        pay_coin(1); // Additional payment to pot
+        if (game) game->add_to_pot(1);
+    }
+    
+    if (game) {
+        game->print_action(name + " performed sanction");
+        game->advance_turn();
     }
 }
 
 void Player::coup(Player& target) {
+    check_turn();
     if (!target.is_active()) {
         throw std::runtime_error("target is already eliminated");
     }
@@ -110,37 +156,39 @@ void Player::coup(Player& target) {
     }
 
     if (target.role == Role::General && coins >= 5) {
-        coins -= 5; // הגנה מצליחה, הפעולה נכשלת
+        coins -= 5; // Defense successful, action fails
+        if (game) {
+            game->print_action(name + " attempted coup but was blocked by General");
+            game->advance_turn();
+        }
         return;
     }
 
     coins -= 7;
     target.deactivate();
+    if (game) {
+        game->print_action(name + " performed coup");
+        game->advance_turn();
+    }
 }
 
-
-
-
-
-
-void Player::use_special_ability(Player& target) {
+void Player::use_special_ability() {
+    check_turn();
     switch (role) {
-        case Role::Spy:
-            std::cout << target.get_name() << " has " << target.get_coins() << " coins." << std::endl;
-            target.add_blocked_action("arrest");
-            break;
         case Role::Baron:
+            // Investment: pay 3, get 6
             if (coins < 3) {
                 throw std::runtime_error("not enough coins to invest");
             }
             coins -= 3;
             coins += 6;
             break;
-        case Role::Judge:
-            target.receive_coin(-4); // ביטול שוחד
-            break;
         default:
-            throw std::runtime_error("this role has no active ability");
+            throw std::runtime_error("this role has no special ability");
+    }
+    if (game) {
+        game->print_action(name + " used special ability");
+        game->advance_turn();
     }
 }
 
