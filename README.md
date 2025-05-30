@@ -59,5 +59,5 @@ make test       # מריץ בדיקות
 make valgrind   # בודק זליגות זיכרון
 make clean      # מנקה קבצים זמניים
 
-</div>
+
 
