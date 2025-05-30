@@ -1,3 +1,4 @@
+//israelmor555@gmail.com
 
 #ifndef COUP_ROLE_HPP
 #define COUP_ROLE_HPP

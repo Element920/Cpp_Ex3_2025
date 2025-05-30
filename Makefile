@@ -1,3 +1,4 @@
+#israelmor555@gmail.com
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -g
 SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
@@ -7,7 +8,7 @@ SOURCES = Player.cpp Game.cpp Baron.cpp Governor.cpp Spy.cpp General.cpp Judge.c
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # Targets
-.PHONY: all clean test valgrind gui help
+.PHONY: all clean test test-runner valgrind gui help
 
 all: Main
 
@@ -19,8 +20,9 @@ Main: Demo.cpp $(OBJECTS)
 gui: CoupGUI.cpp $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o coup_gui CoupGUI.cpp $(OBJECTS) $(SFML_FLAGS)
 
-test: TestRunner.cpp $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o test TestRunner.cpp $(OBJECTS)
+# Test target - builds and runs Test.cpp
+test: Test.cpp $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o test Test.cpp $(OBJECTS)
 	./test
 
 valgrind: Main
@@ -30,7 +32,7 @@ valgrind: Main
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o Main test coup_gui
+	rm -f *.o Main test test_runner coup_gui
 
 # Dependencies
 Player.o: Player.cpp Player.hpp Role.hpp Game.hpp
@@ -45,12 +47,13 @@ Merchant.o: Merchant.cpp Merchant.hpp Player.hpp Game.hpp
 # Help
 help:
 	@echo "Available targets:"
-	@echo "  all      - Build original Main executable"
-	@echo "  Main     - Build original demo version"
-	@echo "  gui      - Build GUI version (requires SFML)"
-	@echo "  test     - Build and run tests"
-	@echo "  valgrind - Run Main with valgrind"
-	@echo "  clean    - Remove all object files and executables"
+	@echo "  all         - Build original Main executable"
+	@echo "  Main        - Build original demo version"
+	@echo "  gui         - Build GUI version (requires SFML)"
+	@echo "  test        - Build and run Test.cpp"
+	@echo "  test-runner - Build and run TestRunner.cpp"
+	@echo "  valgrind    - Run Main with valgrind"
+	@echo "  clean       - Remove all object files and executables"
 	@echo ""
 	@echo "Note: GUI version requires SFML to be installed"
 	@echo "On macOS: brew install sfml"

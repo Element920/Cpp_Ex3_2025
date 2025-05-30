@@ -1,3 +1,5 @@
+//israelmor555@gmail.com
+
 #ifndef COUP_SPY_HPP
 #define COUP_SPY_HPP
 

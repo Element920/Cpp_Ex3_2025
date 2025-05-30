@@ -1,4 +1,5 @@
-//
+//israelmor555@gmail.com
+
 // Created by israel on 5/19/25.
 //
 #include "Game.hpp"
@@ -7,7 +8,8 @@
 
 using namespace coup;
 
-Game::Game() : current_turn_index(0), pot(50) {} // לדוגמה, נתחיל קופה עם 50 מטבעות
+constexpr int INITIAL_POT = 50;
+Game::Game() : current_turn_index(0), pot(INITIAL_POT) {} // לדוגמה, נתחיל קופה עם 50 מטבעות
 
 void Game::add_player(Player* player) {
     if (players_list.size() >= 6) {
@@ -48,9 +50,16 @@ std::vector<std::string> Game::players() const {
 
 std::string Game::winner() const {
     std::vector<std::string> active = players();
+
     if (active.size() == 1) {
         return active.front();
     }
+
+    if (active.empty()) {
+        throw std::runtime_error("No players active - invalid game state!");
+    }
+
+    // Game is not over - there are still multiple active players
     throw GameNotOverException();
 }
 
@@ -68,11 +77,12 @@ void Game::remove_from_pot(int amount) {
     }
     pot -= amount;
 }
+
 void Game::print_action(const std::string& action) {
     last_action = action;
 }
 
-    // std::ostream& operator<<(std::ostream& os, const Game& game) {
-    //     os << "Last action: " << game;
-    //     return os;
-    // }
+// std::ostream& operator<<(std::ostream& os, const Game& game) {
+//     os << "Last action: " << game;
+//     return os;
+// }

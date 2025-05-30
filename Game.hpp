@@ -1,3 +1,5 @@
+//israelmor555@gmail.com
+
 #ifndef COUP_GAME_HPP
 #define COUP_GAME_HPP
 

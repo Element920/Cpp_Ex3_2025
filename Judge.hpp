@@ -1,3 +1,5 @@
+//israelmor555@gmail.com
+
 #ifndef COUP_JUDGE_HPP
 #define COUP_JUDGE_HPP
 

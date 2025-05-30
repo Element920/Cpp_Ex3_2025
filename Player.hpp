@@ -1,3 +1,5 @@
+//israelmor555@gmail.com
+
 #ifndef COUP_PLAYER_HPP
 #define COUP_PLAYER_HPP
 
@@ -16,12 +18,17 @@ namespace coup {
         bool active;
         std::vector<std::string> blocked_actions;
         void is_must_coup() const;
-        coup::Game* game;
+
+        void block_action(Player &target, const std::string &action);
+
+        coup::Game* game = nullptr;
         
         // Helper method to check if it's this player's turn
         void check_turn() const;
 
     public:
+        virtual ~Player() = default;
+
         Player(std::string name, Role role);
         void set_game(coup::Game* g) { game = g; }
         coup::Game* get_game() const { return game; }
@@ -31,7 +38,7 @@ namespace coup {
         int get_coins() const;
         bool is_active() const;
         void set_coins(int coins);
-
+        void activate() { active = true; }
         virtual void gather();
         virtual void tax();
         virtual void bribe();
